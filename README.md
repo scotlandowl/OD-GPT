@@ -1,2 +1,2 @@
 # OD-GPT
-predict od flows of city
+predict Origin-Destination flows of city
