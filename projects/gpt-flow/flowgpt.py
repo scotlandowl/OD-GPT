@@ -1,23 +1,15 @@
-"""
-Trains a character-level language model.
-"""
-
 import os
 import sys
 import time
 sys.path.append('D:\code\OD-GPT')
-
+import random
 import torch
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
-
 from od_gpt.model import GPT
 from od_gpt.trainer import Trainer
 from od_gpt.utils import set_seed, setup_logging, CfgNode as CN
 
-import random
-
-# -----------------------------------------------------------------------------
 
 def get_config():
 
@@ -26,9 +18,7 @@ def get_config():
     # system
     C.system = CN()
     C.system.seed = 1028
-    # C.system.work_dir = './out/chargpt'
     C.system.work_dir = './model/quanzhou/weekday'
-    # C.system.work_dir = './g5/chargpt1'
 
     # data
     C.data = CharDataset.get_default_config()
@@ -36,21 +26,15 @@ def get_config():
     # model
     C.model = GPT.get_default_config()
     C.model.model_type = 'gpt-flow'
-    # C.model.model_type = 'gpt-8001'
 
     # trainer
     C.trainer = Trainer.get_default_config()
-    # C.trainer.learning_rate = 5e-4 # the model we're using is so small that we can go a bit faster
     C.trainer.learning_rate = 3e-4
     
     return C
 
-# -----------------------------------------------------------------------------
 
 class CharDataset(Dataset):
-    """
-    Emits batches of characters
-    """
 
     @staticmethod
     def get_default_config():
@@ -74,7 +58,6 @@ class CharDataset(Dataset):
         random.shuffle(split_data)
         text = []
         for x in split_data:
-            # 设置2训练长为 96 * 2 的序列，取第二个96，使得初始几个小时随机性降低
             for _ in range(1):
                 text.append('start')
                 strs = x.split('\t')[:-1]
@@ -97,7 +80,6 @@ class CharDataset(Dataset):
                 file.write(str(k) + ':' + str(v) + '\n')
                 
         self.vocab_size = vocab_size
-        # self.data = data
         
         self.start_indices = [i for i, x in enumerate(self.data) if x == "start"]
 
@@ -138,15 +120,13 @@ class CharDataset(Dataset):
 
 if __name__ == '__main__':
 
-    # get default config and overrides from the command line, if any
     config = get_config()
     config.merge_from_args(sys.argv[1:])
     print(config)
     print(config.trainer.file_name)
     setup_logging(config)
-    seed = int(time.time())  # 使用当前时间的时间戳作为随机种子
+    seed = int(time.time())  
     set_seed(seed)
-    # set_seed(config.system.seed)
     
     # text = ""
     # folder_path = "./dataset/quanzhou/od_flow"
@@ -168,18 +148,13 @@ if __name__ == '__main__':
     random.shuffle(split_data)
     text = []
     for x in split_data:
-        # 设置2训练长为 96 * 2 的序列，取第二个96，使得初始几个小时随机性降低
         for _ in range(1):
             text.append('start')
             strs = x.split('\t')[:-1]
-            # strs = x.split('\t')
-            # strs = strs[16:] + strs[:16]
             text.extend(strs)
-            # text.pop()
             text.append('end')
 
             
-    # text = open('input.txt', 'r', encoding = 'utf-8').read()
     train_dataset = CharDataset(config.data, text)
 
     # construct the model
@@ -187,15 +162,12 @@ if __name__ == '__main__':
     config.model.block_size = train_dataset.get_block_size()
     model = GPT(config.model)
 
-    # 加载预训练
-    pretrained_model_path = './model/quanzhou/weekday/model100.pt'
-    pretrained_state_dict = torch.load(pretrained_model_path)
-    model.load_state_dict(pretrained_state_dict)
-    # # 冻结wte
-    # for name, param in model.named_parameters():
-    #     if name == 'transformer.wte.weight':
-    #         param.requires_grad = False
-    model.train()
+    initial_model_path = './model/quanzhou/weekday/model100.pt'
+    # load initialization model
+    if os.path.exists(initial_model_path):
+        pretrained_state_dict = torch.load(initial_model_path)
+        model.load_state_dict(pretrained_state_dict)
+        model.train()
     
     # construct the trainer object
     trainer = Trainer(config.trainer, model, train_dataset)
@@ -214,7 +186,6 @@ if __name__ == '__main__':
                 # context = ["start", "19171".zfill(6)]
                 context = ["start", "1791".zfill(6)]
                 x = torch.tensor([train_dataset.stoi[x] for x in context], dtype=torch.long)[None,...].to(trainer.device)
-                # Top-k采样：设置一个参数k，从概率分布的前k个最高概率的候选词中进行采样。这样可以限制选择范围，并增加模型输出的多样性。
                 tmp = model.generate(x, 98 - len(context), temperature=1.01, do_sample=True, top_k=100)
                 # print(tmp)
                 y = tmp[0]
