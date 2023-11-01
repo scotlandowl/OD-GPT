@@ -2,7 +2,7 @@
 
 ## train
 ```
-cd projects/gpt_flow
+cd gpt_flow
 ### initial model
 python flowgpt.py --trainer.max_iters=101
 ### train model
@@ -13,7 +13,7 @@ python flowgpt_finetune.py
 
 ## validate
 ```
-cd projects/gpt_flow
+cd gpt_flow
 python generate_flow_qz.py
 python generate_flow_qz_finetune.py
 ```
