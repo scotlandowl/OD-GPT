@@ -33,7 +33,7 @@ if __name__ == '__main__':
     print(config)
     setup_logging(config)
     
-    seed = int(time.time())  # 使用当前时间的时间戳作为随机种子
+    seed = int(time.time())
     set_seed(seed)
     
     text = []
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     # model.load_state_dict(torch.load('./model/quanzhou/weekday/model_finetuning_best.pt'))
     model.eval()
     
-    num_executions = args.num_executions  # 设置要执行的次数
+    num_executions = args.num_executions 
     # fid = args.fid
     
     test_name = str(config.trainer.file_test)
@@ -90,4 +90,4 @@ if __name__ == '__main__':
                 file.write(completion + '\n')
                 flag = 0
                 if cnt % 1000 == 0:
-                    print('已完成：', int(cnt * 1000 / len(text)) / 10 , '%')
+                    print('completed:', int(cnt * 1000 / len(text)) / 10 , '%')

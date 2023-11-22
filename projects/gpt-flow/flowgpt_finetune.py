@@ -151,10 +151,6 @@ if __name__ == '__main__':
     for name, param in model.named_parameters():
         if name in ['transformer.wte.weight', 'transformer.wpe.weight'] or 'transformer.h.0' in name or 'transformer.h.1' in name or 'transformer.h.2' in name:
             param.requires_grad = False
-        # if 'transformer.h.10' in name or 'transformer.h.11' in name:
-        #     continue
-        # else:
-        #     param.requires_grad = False
     model.train()
     
     # construct the trainer object

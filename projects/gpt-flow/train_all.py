@@ -4,7 +4,7 @@ import subprocess
 folder_path = "./dataset/quanzhou/od_flow"
 
 for i in range(100):
-    print('第', i + 1, '轮')
+    print('round:', i + 1)
     for file_name in os.listdir(folder_path):
         if "weekend" in file_name or "test" in file_name:
             continue 
