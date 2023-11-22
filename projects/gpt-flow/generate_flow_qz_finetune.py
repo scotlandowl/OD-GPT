@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # file_test = test_name + ".txt"
     
     # test 2
-    file_test = "20191002.txt"
+    file_test = "20201002.txt"
     
     # his_length = int(config.trainer.his_length)
     his_length = args.his_length
