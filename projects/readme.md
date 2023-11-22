@@ -17,8 +17,3 @@ cd ./gpt_flow
 python generate_flow_qz.py
 python generate_flow_qz_finetune.py
 ```
-
-## calculate RMSE, MAE
-```
-cd ./gpt_flow/compare
-```
