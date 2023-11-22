@@ -103,20 +103,7 @@ class CharDataset(Dataset):
         y = torch.tensor(dix[1:], dtype=torch.long)
         return x, y
     
-    # def __getitem__(self, idx):
-    #     # select the first start index as the beginning of the block
-    #     start_index = self.start_indices[idx % len(self.start_indices)]
-    #     # grab a chunk of (block_size + 1) characters starting from the selected index
-    #     chunk = self.data[start_index:start_index + self.config.block_size]
-    #     # print(chunk)
-    #     # encode every character to an integer
-    #     dix = [self.stoi[s] for s in chunk]
-    #     # return as tensors
-    #     x = torch.tensor(dix[:-1], dtype=torch.long)
-    #     y = torch.tensor(dix[1:], dtype=torch.long)
-    #     return x, y
 
-# -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
